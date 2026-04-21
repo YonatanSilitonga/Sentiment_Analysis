@@ -1,0 +1,139 @@
+{
+  "created_at": "2026-04-10T21:02:40",
+  "version": "v3_hybrid_extended_rules",
+  "data_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\Merged_Excel\\dataset_labeled.xlsx",
+  "model_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v3\\sentiment_model_v3.joblib",
+  "vectorizer_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v3\\tfidf_vectorizer_v3.joblib",
+  "hybrid_rules_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v3\\hybrid_rules_v3.json",
+  "best_model": "logistic_regression_balanced_hybrid_v3",
+  "selection_metric": "macro_f1_then_negative_recall_then_accuracy",
+  "refit_on_full_data": true,
+  "label_order": [
+    "negatif",
+    "netral",
+    "positif"
+  ],
+  "rows_after_preprocessing": 379,
+  "train_rows": 303,
+  "test_rows": 76,
+  "base_metrics": {
+    "accuracy": 0.9210526315789473,
+    "macro_f1": 0.9275081643502695,
+    "negative_recall": 0.9090909090909091,
+    "classification_report": {
+      "negatif": {
+        "precision": 1.0,
+        "recall": 0.9090909090909091,
+        "f1-score": 0.9523809523809523,
+        "support": 11.0
+      },
+      "netral": {
+        "precision": 0.9615384615384616,
+        "recall": 0.8620689655172413,
+        "f1-score": 0.9090909090909091,
+        "support": 29.0
+      },
+      "positif": {
+        "precision": 0.875,
+        "recall": 0.9722222222222222,
+        "f1-score": 0.9210526315789473,
+        "support": 36.0
+      },
+      "accuracy": 0.9210526315789473,
+      "macro avg": {
+        "precision": 0.9455128205128206,
+        "recall": 0.9144606989434575,
+        "f1-score": 0.9275081643502695,
+        "support": 76.0
+      },
+      "weighted avg": {
+        "precision": 0.9261133603238867,
+        "recall": 0.9210526315789473,
+        "f1-score": 0.9210226523245912,
+        "support": 76.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        10,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        4
+      ],
+      [
+        0,
+        1,
+        35
+      ]
+    ]
+  },
+  "hybrid_metrics": {
+    "accuracy": 0.9210526315789473,
+    "macro_f1": 0.9275081643502695,
+    "negative_recall": 0.9090909090909091,
+    "classification_report": {
+      "negatif": {
+        "precision": 1.0,
+        "recall": 0.9090909090909091,
+        "f1-score": 0.9523809523809523,
+        "support": 11.0
+      },
+      "netral": {
+        "precision": 0.9615384615384616,
+        "recall": 0.8620689655172413,
+        "f1-score": 0.9090909090909091,
+        "support": 29.0
+      },
+      "positif": {
+        "precision": 0.875,
+        "recall": 0.9722222222222222,
+        "f1-score": 0.9210526315789473,
+        "support": 36.0
+      },
+      "accuracy": 0.9210526315789473,
+      "macro avg": {
+        "precision": 0.9455128205128206,
+        "recall": 0.9144606989434575,
+        "f1-score": 0.9275081643502695,
+        "support": 76.0
+      },
+      "weighted avg": {
+        "precision": 0.9261133603238867,
+        "recall": 0.9210526315789473,
+        "f1-score": 0.9210226523245912,
+        "support": 76.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        10,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        4
+      ],
+      [
+        0,
+        1,
+        35
+      ]
+    ]
+  },
+  "hybrid_config": {
+    "enabled": true,
+    "negative_label": "negatif",
+    "high_confidence_threshold": 0.55,
+    "mid_confidence_threshold": 0.3,
+    "mid_keyword_score_threshold": 2,
+    "strong_signal_score_threshold": 3,
+    "strong_signal_min_prob": 0.15
+  },
+  "negative_signal_count": 29
+}

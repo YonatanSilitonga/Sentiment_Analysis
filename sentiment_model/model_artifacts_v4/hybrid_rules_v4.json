@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "negative_label": "negatif",
+  "high_confidence_threshold": 0.55,
+  "mid_confidence_threshold": 0.3,
+  "mid_keyword_score_threshold": 2,
+  "strong_signal_score_threshold": 3,
+  "strong_signal_min_prob": 0.15
+}

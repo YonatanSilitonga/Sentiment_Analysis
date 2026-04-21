@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "negative_label": "negatif",
+  "high_confidence_threshold": 0.55,
+  "mid_confidence_threshold": 0.35,
+  "mid_keyword_score_threshold": 2,
+  "strong_signal_score_threshold": 3,
+  "strong_signal_min_prob": 0.1,
+  "positive_override_enabled": true,
+  "positive_label": "positif",
+  "positive_keyword_score_threshold": 3,
+  "positive_mid_confidence_threshold": 0.2,
+  "positive_block_negative_prob": 0.65
+}

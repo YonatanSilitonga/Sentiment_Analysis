@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "negative_label": "negatif",
+  "high_confidence_threshold": 0.55,
+  "mid_confidence_threshold": 0.25,
+  "mid_keyword_score_threshold": 3,
+  "strong_signal_score_threshold": 3,
+  "strong_signal_min_prob": 0.1,
+  "positive_override_enabled": true,
+  "positive_label": "positif",
+  "positive_keyword_score_threshold": 3,
+  "positive_mid_confidence_threshold": 0.2,
+  "positive_block_negative_prob": 0.65,
+  "neutral_override_enabled": true,
+  "neutral_label": "netral",
+  "neutral_min_positive_score": 2,
+  "neutral_max_negative_score": 1,
+  "neutral_max_negative_prob": 0.3
+}

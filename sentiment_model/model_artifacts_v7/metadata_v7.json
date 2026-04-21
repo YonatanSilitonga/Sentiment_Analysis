@@ -1,0 +1,167 @@
+{
+  "created_at": "2026-04-13T20:35:08",
+  "version": "v7_hybrid_contrast_neutral_override",
+  "data_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\Merged_Excel\\dataset_labeled_combined_v2.xlsx",
+  "model_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v7\\sentiment_model_v7.joblib",
+  "vectorizer_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v7\\tfidf_vectorizer_v7.joblib",
+  "hybrid_rules_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v7\\hybrid_rules_v7.json",
+  "best_model": "logistic_regression_hybrid_v7",
+  "selection_metric": "macro_f1_then_neutral_recall_then_positive_then_negative_then_accuracy",
+  "refit_on_full_data": true,
+  "label_order": [
+    "negatif",
+    "netral",
+    "positif"
+  ],
+  "rows_after_preprocessing": 1027,
+  "train_rows_before_rebalance": 821,
+  "train_rows_after_rebalance": 821,
+  "test_rows": 206,
+  "full_rows_after_rebalance": 1027,
+  "data_source": "combined_v2_no_new_addition_for_v7_training",
+  "train_distribution_before": {
+    "positif": 350,
+    "negatif": 276,
+    "netral": 195
+  },
+  "train_distribution_after": {
+    "negatif": 329,
+    "positif": 287,
+    "netral": 205
+  },
+  "selected_class_weight": "balanced",
+  "base_metrics": {
+    "accuracy": 0.7718446601941747,
+    "macro_f1": 0.7422619047619047,
+    "negative_recall": 0.8260869565217391,
+    "positive_recall": 0.8863636363636364,
+    "neutral_recall": 0.4897959183673469,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.8028169014084507,
+        "recall": 0.8260869565217391,
+        "f1-score": 0.8142857142857143,
+        "support": 69.0
+      },
+      "netral": {
+        "precision": 0.7741935483870968,
+        "recall": 0.4897959183673469,
+        "f1-score": 0.6,
+        "support": 49.0
+      },
+      "positif": {
+        "precision": 0.75,
+        "recall": 0.8863636363636364,
+        "f1-score": 0.8125,
+        "support": 88.0
+      },
+      "accuracy": 0.7718446601941747,
+      "macro avg": {
+        "precision": 0.7756701499318491,
+        "recall": 0.7340821704175742,
+        "f1-score": 0.7422619047619047,
+        "support": 206.0
+      },
+      "weighted avg": {
+        "precision": 0.7734458741172371,
+        "recall": 0.7718446601941747,
+        "f1-score": 0.7625520110957005,
+        "support": 206.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        57,
+        3,
+        9
+      ],
+      [
+        8,
+        24,
+        17
+      ],
+      [
+        6,
+        4,
+        78
+      ]
+    ],
+    "selected_class_weight_name": "balanced"
+  },
+  "hybrid_metrics": {
+    "accuracy": 0.8058252427184466,
+    "macro_f1": 0.7702719803644998,
+    "negative_recall": 0.8985507246376812,
+    "positive_recall": 0.9204545454545454,
+    "neutral_recall": 0.46938775510204084,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.8051948051948052,
+        "recall": 0.8985507246376812,
+        "f1-score": 0.8493150684931506,
+        "support": 69.0
+      },
+      "netral": {
+        "precision": 0.8846153846153846,
+        "recall": 0.46938775510204084,
+        "f1-score": 0.6133333333333333,
+        "support": 49.0
+      },
+      "positif": {
+        "precision": 0.7864077669902912,
+        "recall": 0.9204545454545454,
+        "f1-score": 0.8481675392670157,
+        "support": 88.0
+      },
+      "accuracy": 0.8058252427184466,
+      "macro avg": {
+        "precision": 0.8254059856001604,
+        "recall": 0.7627976750647557,
+        "f1-score": 0.7702719803644998,
+        "support": 206.0
+      },
+      "weighted avg": {
+        "precision": 0.8160605771832089,
+        "recall": 0.8058252427184466,
+        "f1-score": 0.7926932840527092,
+        "support": 206.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        62,
+        1,
+        6
+      ],
+      [
+        10,
+        23,
+        16
+      ],
+      [
+        5,
+        2,
+        81
+      ]
+    ]
+  },
+  "hybrid_config": {
+    "enabled": true,
+    "negative_label": "negatif",
+    "high_confidence_threshold": 0.55,
+    "mid_confidence_threshold": 0.25,
+    "mid_keyword_score_threshold": 3,
+    "strong_signal_score_threshold": 3,
+    "strong_signal_min_prob": 0.1,
+    "positive_override_enabled": true,
+    "positive_label": "positif",
+    "positive_keyword_score_threshold": 3,
+    "positive_mid_confidence_threshold": 0.2,
+    "positive_block_negative_prob": 0.65,
+    "neutral_override_enabled": true,
+    "neutral_label": "netral",
+    "neutral_min_positive_score": 2,
+    "neutral_max_negative_score": 1,
+    "neutral_max_negative_prob": 0.3
+  }
+}

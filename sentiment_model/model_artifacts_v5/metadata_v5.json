@@ -1,0 +1,160 @@
+{
+  "created_at": "2026-04-11T11:47:29",
+  "version": "v5_hybrid_rebalanced_custom_weight",
+  "data_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\Merged_Excel\\dataset_labeled_combined.xlsx",
+  "model_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v5\\sentiment_model_v5.joblib",
+  "vectorizer_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v5\\tfidf_vectorizer_v5.joblib",
+  "hybrid_rules_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v5\\hybrid_rules_v5.json",
+  "best_model": "logistic_regression_hybrid_v5",
+  "selection_metric": "macro_f1_then_positive_recall_then_negative_recall_then_accuracy",
+  "refit_on_full_data": true,
+  "label_order": [
+    "negatif",
+    "netral",
+    "positif"
+  ],
+  "rows_after_preprocessing": 677,
+  "train_rows_before_rebalance": 541,
+  "train_rows_after_rebalance": 541,
+  "test_rows": 136,
+  "full_rows_after_rebalance": 677,
+  "data_source": "combined_rebalanced: original (379) + new Toba (400)",
+  "train_distribution_before": {
+    "negatif": 276,
+    "positif": 150,
+    "netral": 115
+  },
+  "train_distribution_after": {
+    "negatif": 217,
+    "positif": 189,
+    "netral": 135
+  },
+  "selected_class_weight": "balanced",
+  "base_metrics": {
+    "accuracy": 0.7352941176470589,
+    "macro_f1": 0.6648148148148149,
+    "negative_recall": 0.8985507246376812,
+    "positive_recall": 0.7105263157894737,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.8266666666666667,
+        "recall": 0.8985507246376812,
+        "f1-score": 0.8611111111111112,
+        "support": 69.0
+      },
+      "netral": {
+        "precision": 0.5789473684210527,
+        "recall": 0.3793103448275862,
+        "f1-score": 0.4583333333333333,
+        "support": 29.0
+      },
+      "positif": {
+        "precision": 0.6428571428571429,
+        "recall": 0.7105263157894737,
+        "f1-score": 0.675,
+        "support": 38.0
+      },
+      "accuracy": 0.7352941176470589,
+      "macro avg": {
+        "precision": 0.6828237259816207,
+        "recall": 0.6627957950849137,
+        "f1-score": 0.6648148148148149,
+        "support": 136.0
+      },
+      "weighted avg": {
+        "precision": 0.7224856258292791,
+        "recall": 0.7352941176470589,
+        "f1-score": 0.7232230392156864,
+        "support": 136.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        62,
+        4,
+        3
+      ],
+      [
+        6,
+        11,
+        12
+      ],
+      [
+        7,
+        4,
+        27
+      ]
+    ],
+    "selected_class_weight_name": "balanced"
+  },
+  "hybrid_metrics": {
+    "accuracy": 0.7573529411764706,
+    "macro_f1": 0.6829823134170961,
+    "negative_recall": 0.9420289855072463,
+    "positive_recall": 0.7105263157894737,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.8227848101265823,
+        "recall": 0.9420289855072463,
+        "f1-score": 0.8783783783783784,
+        "support": 69.0
+      },
+      "netral": {
+        "precision": 0.6470588235294118,
+        "recall": 0.3793103448275862,
+        "f1-score": 0.4782608695652174,
+        "support": 29.0
+      },
+      "positif": {
+        "precision": 0.675,
+        "recall": 0.7105263157894737,
+        "f1-score": 0.6923076923076923,
+        "support": 38.0
+      },
+      "accuracy": 0.7573529411764706,
+      "macro avg": {
+        "precision": 0.7149478778853314,
+        "recall": 0.677288548708102,
+        "f1-score": 0.6829823134170961,
+        "support": 136.0
+      },
+      "weighted avg": {
+        "precision": 0.7440210130962289,
+        "recall": 0.7573529411764706,
+        "f1-score": 0.7410688649499391,
+        "support": 136.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        65,
+        3,
+        1
+      ],
+      [
+        6,
+        11,
+        12
+      ],
+      [
+        8,
+        3,
+        27
+      ]
+    ]
+  },
+  "hybrid_config": {
+    "enabled": true,
+    "negative_label": "negatif",
+    "high_confidence_threshold": 0.55,
+    "mid_confidence_threshold": 0.35,
+    "mid_keyword_score_threshold": 2,
+    "strong_signal_score_threshold": 3,
+    "strong_signal_min_prob": 0.1,
+    "positive_override_enabled": true,
+    "positive_label": "positif",
+    "positive_keyword_score_threshold": 3,
+    "positive_mid_confidence_threshold": 0.25,
+    "positive_block_negative_prob": 0.65
+  }
+}

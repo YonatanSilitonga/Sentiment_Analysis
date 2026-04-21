@@ -1,0 +1,171 @@
+{
+  "created_at": "2026-04-17T14:14:04",
+  "version": "v9_phrase_preserving_ngram_aware_negative_first",
+  "data_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\Merged_Excel\\dataset_labeled_combined_v3.xlsx",
+  "model_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v9\\sentiment_model_v9.joblib",
+  "vectorizer_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v9\\tfidf_vectorizer_v9.joblib",
+  "hybrid_rules_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Scrapping_Data\\sentiment_model\\model_artifacts_v9\\hybrid_rules_v9.json",
+  "best_model": "logistic_regression_hybrid_v9",
+  "selection_metric": "macro_f1_then_negative_recall_then_neutral_recall_then_positive_recall_then_accuracy",
+  "refit_on_full_data": true,
+  "label_order": [
+    "negatif",
+    "netral",
+    "positif"
+  ],
+  "rows_after_preprocessing": 1227,
+  "train_rows_before_rebalance": 981,
+  "train_rows_after_rebalance": 981,
+  "test_rows": 246,
+  "full_rows_after_rebalance": 1227,
+  "data_source": "combined_v3_with_phrase_preservation",
+  "train_distribution_before": {
+    "netral": 355,
+    "positif": 350,
+    "negatif": 276
+  },
+  "train_distribution_after": {
+    "negatif": 335,
+    "positif": 323,
+    "netral": 323
+  },
+  "selected_class_weight": {
+    "negatif": 1.1,
+    "netral": 1.0,
+    "positif": 0.9
+  },
+  "base_metrics": {
+    "accuracy": 0.7926829268292683,
+    "macro_f1": 0.790844698260631,
+    "negative_recall": 0.7246376811594203,
+    "positive_recall": 0.7954545454545454,
+    "neutral_recall": 0.8426966292134831,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.8333333333333334,
+        "recall": 0.7246376811594203,
+        "f1-score": 0.7751937984496124,
+        "support": 69.0
+      },
+      "netral": {
+        "precision": 0.7894736842105263,
+        "recall": 0.8426966292134831,
+        "f1-score": 0.8152173913043478,
+        "support": 89.0
+      },
+      "positif": {
+        "precision": 0.7692307692307693,
+        "recall": 0.7954545454545454,
+        "f1-score": 0.7821229050279329,
+        "support": 88.0
+      },
+      "accuracy": 0.7926829268292683,
+      "macro avg": {
+        "precision": 0.7973459289248762,
+        "recall": 0.7875962852758164,
+        "f1-score": 0.790844698260631,
+        "support": 246.0
+      },
+      "weighted avg": {
+        "precision": 0.7945344129554657,
+        "recall": 0.7926829268292683,
+        "f1-score": 0.7921525835836111,
+        "support": 246.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        50,
+        9,
+        10
+      ],
+      [
+        3,
+        75,
+        11
+      ],
+      [
+        7,
+        11,
+        70
+      ]
+    ],
+    "selected_class_weight_name": "custom_v2"
+  },
+  "hybrid_metrics": {
+    "accuracy": 0.8048780487804879,
+    "macro_f1": 0.8056287926344424,
+    "negative_recall": 0.7971014492753623,
+    "positive_recall": 0.7954545454545454,
+    "neutral_recall": 0.8202247191011236,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.8333333333333334,
+        "recall": 0.7971014492753623,
+        "f1-score": 0.8148148148148148,
+        "support": 69.0
+      },
+      "netral": {
+        "precision": 0.8021978021978022,
+        "recall": 0.8202247191011236,
+        "f1-score": 0.8111111111111111,
+        "support": 89.0
+      },
+      "positif": {
+        "precision": 0.7865168539325843,
+        "recall": 0.7954545454545454,
+        "f1-score": 0.7909604519774012,
+        "support": 88.0
+      },
+      "accuracy": 0.8048780487804879,
+      "macro avg": {
+        "precision": 0.80734932982124,
+        "recall": 0.8042602379436771,
+        "f1-score": 0.8056287926344424,
+        "support": 246.0
+      },
+      "weighted avg": {
+        "precision": 0.8053214940718365,
+        "recall": 0.8048780487804879,
+        "f1-score": 0.8049415889639122,
+        "support": 246.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        55,
+        7,
+        7
+      ],
+      [
+        4,
+        73,
+        12
+      ],
+      [
+        7,
+        11,
+        70
+      ]
+    ]
+  },
+  "hybrid_config": {
+    "enabled": true,
+    "negative_label": "negatif",
+    "high_confidence_threshold": 0.55,
+    "mid_confidence_threshold": 0.25,
+    "mid_keyword_score_threshold": 3,
+    "strong_signal_score_threshold": 3,
+    "strong_signal_min_prob": 0.1,
+    "positive_override_enabled": true,
+    "positive_label": "positif",
+    "positive_keyword_score_threshold": 3,
+    "positive_mid_confidence_threshold": 0.22,
+    "positive_block_negative_prob": 0.62,
+    "neutral_override_enabled": true,
+    "neutral_label": "netral",
+    "neutral_min_positive_score": 2,
+    "neutral_max_negative_score": 1,
+    "neutral_max_negative_prob": 0.3
+  }
+}
