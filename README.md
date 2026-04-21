@@ -231,7 +231,3 @@ Sentiment_Analysis/
 - Model aktif default saat ini adalah v9 (`model_artifacts_v9`).
 - Script di folder `experiments/` bersifat analisis/diagnostik tambahan, bukan jalur utama production.
 - Untuk deployment production, jalankan service Python sebagai process terpisah dan hubungkan URL service melalui environment aplikasi admin.
-
-## Lisensi
-
-Silakan sesuaikan lisensi proyek sesuai kebijakan tim/instansi sebelum publikasi.
