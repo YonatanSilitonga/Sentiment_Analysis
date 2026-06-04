@@ -137,6 +137,13 @@ def load_artifacts(model_dir: Path):
         )
 
     model = load(model_path)
+    # Monkeypatch for scikit-learn LogisticRegression backward compatibility
+    if hasattr(model, "predict") and not hasattr(model, "multi_class"):
+        try:
+            model.multi_class = "auto"
+        except AttributeError:
+            pass
+
     vectorizer = load(vectorizer_path)
     hybrid_config = None
 
