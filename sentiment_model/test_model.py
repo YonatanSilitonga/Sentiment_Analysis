@@ -86,10 +86,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_artifacts(model_dir: Path):
-    model_candidates = ["sentiment_model_v9.joblib", "sentiment_model.joblib", "sentiment_model_v2.joblib", "sentiment_model_v3.joblib", "sentiment_model_v4.joblib", "sentiment_model_v5.joblib", "sentiment_model_v7.joblib", "sentiment_model_v8.joblib"]
-    vectorizer_candidates = ["tfidf_vectorizer_v9.joblib", "tfidf_vectorizer.joblib", "tfidf_vectorizer_v2.joblib", "tfidf_vectorizer_v3.joblib", "tfidf_vectorizer_v4.joblib", "tfidf_vectorizer_v5.joblib", "tfidf_vectorizer_v7.joblib", "tfidf_vectorizer_v8.joblib"]
-    metadata_candidates = ["metadata_v9.json", "metadata.json", "metadata_v2.json", "metadata_v3.json", "metadata_v4.json", "metadata_v5.json", "metadata_v7.json", "metadata_v8.json"]
-    hybrid_candidates = ["hybrid_rules_v9.json", "hybrid_rules.json", "hybrid_rules_v2.json", "hybrid_rules_v3.json", "hybrid_rules_v4.json", "hybrid_rules_v5.json", "hybrid_rules_v7.json", "hybrid_rules_v8.json"]
+    model_candidates = ["sentiment_model_v11.joblib", "sentiment_model_v10.joblib", "sentiment_model_v9.joblib", "sentiment_model.joblib", "sentiment_model_v2.joblib", "sentiment_model_v3.joblib", "sentiment_model_v4.joblib", "sentiment_model_v5.joblib", "sentiment_model_v7.joblib", "sentiment_model_v8.joblib"]
+    vectorizer_candidates = ["tfidf_vectorizer_v11.joblib", "tfidf_vectorizer_v10.joblib", "tfidf_vectorizer_v9.joblib", "tfidf_vectorizer.joblib", "tfidf_vectorizer_v2.joblib", "tfidf_vectorizer_v3.joblib", "tfidf_vectorizer_v4.joblib", "tfidf_vectorizer_v5.joblib", "tfidf_vectorizer_v7.joblib", "tfidf_vectorizer_v8.joblib"]
+    metadata_candidates = ["metadata_v11.json", "metadata_v10.json", "metadata_v9.json", "metadata.json", "metadata_v2.json", "metadata_v3.json", "metadata_v4.json", "metadata_v5.json", "metadata_v7.json", "metadata_v8.json"]
+    hybrid_candidates = ["hybrid_rules_v11.json", "hybrid_rules_v10.json", "hybrid_rules_v9.json", "hybrid_rules.json", "hybrid_rules_v2.json", "hybrid_rules_v3.json", "hybrid_rules_v4.json", "hybrid_rules_v5.json", "hybrid_rules_v7.json", "hybrid_rules_v8.json"]
 
     metadata_path = next((model_dir / name for name in metadata_candidates if (model_dir / name).exists()), model_dir / metadata_candidates[0])
     hybrid_path = next((model_dir / name for name in hybrid_candidates if (model_dir / name).exists()), None)

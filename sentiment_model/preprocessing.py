@@ -3,6 +3,9 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+import json
+from pathlib import Path
+
 import pandas as pd
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
@@ -33,7 +36,7 @@ NORMALIZATION_PATTERNS = [
     (r"\b(?:gk|ga|gak|nggak)\b", " tidak "),
     (r"\bblm\b", " belum "),
     (r"\bbgt\b|\bbanget\b|\bbangat\b", " sangat "),
-    (r"\b(?:rekomen|rekomended|recommended|recommend)\b", " rekomendasi "),
+    (r"\b(?:rekomen|rekomended|recomended|recommended|rekomended|recommend)\b", " rekomendasi "),
     (r"\bkrn\b", " karena "),
     (r"\btp\b", " tapi "),
     (r"\bjg\b", " juga "),
@@ -52,6 +55,10 @@ PHRASE_NORMALIZATION_PATTERNS = [
     (r"\bsangat\s+memuaskan\b", " sangat_memuaskan "),
     (r"\bsangat\s+nyaman\b", " sangat_nyaman "),
     (r"\bsangat\s+ramah\b", " sangat_ramah "),
+    (r"\btidak\s+tembus\s+suara\b", " tidak_tembus_suara "),
+    (r"\bkedap\s+suara\b", " kedap_suara "),
+    (r"\bsesuai\s+harga\b|\bsesuai\s+tarif\b|\bsesuai\s+budget\b", " sesuai_harga "),
+    (r"\bbiasa\s+aja\b", " biasa_saja "),
 ]
 
 PROTECTED_TOKENS = {
@@ -85,6 +92,10 @@ PROTECTED_TOKENS = {
     "sangat_memuaskan",
     "sangat_nyaman",
     "sangat_ramah",
+    "tidak_tembus_suara",
+    "kedap_suara",
+    "sesuai_harga",
+    "biasa_saja",
 }
 
 
@@ -146,12 +157,30 @@ class IndonesianTextPreprocessor:
         custom_stopwords = {"yg", "aja", "nya", "nih", "sih", "dong", "deh"}
         self.stopwords_id |= custom_stopwords
 
+        # Load slang dictionary
+        self.slang_dict: dict[str, str] = {}
+        try:
+            project_root = Path(__file__).resolve().parent.parent
+            slang_path = project_root / "combined_slang_words.txt"
+            if slang_path.exists():
+                with open(slang_path, "r", encoding="utf-8") as f:
+                    self.slang_dict = json.load(f)
+        except Exception as e:
+            print(f"Warning: Failed to load slang dictionary: {e}")
+
     def normalize_text(self, text: str) -> str:
         normalized = "" if pd.isna(text) else str(text)
-        normalized = strip_edge_ellipsis(normalized).lower()
+        normalized = strip_edge_ellipsis(normalized)
+        # Fix missing space after punctuation (e.g. "disini.dan" -> "disini. dan")
+        normalized = re.sub(r"(?<=[.!?,;])(?=[^\s\d])", r" ", normalized)
         normalized = re.sub(r"https?://\S+|www\.\S+", " ", normalized)
         for pattern, replacement in NORMALIZATION_PATTERNS:
             normalized = re.sub(pattern, replacement, normalized)
+        # Fix missing spaces in camelCase-like strings (e.g., hotelPelayanan -> hotel Pelayanan)
+        normalized = re.sub(r"([a-z])([A-Z])", r"\1 \2", normalized)
+        # Fix reduplication with '2' (e.g., marah2 -> marah marah)
+        normalized = re.sub(r"\b(\w+)2\b", r"\1 \1", normalized)
+        normalized = normalized.lower()
         for pattern, replacement in PHRASE_NORMALIZATION_PATTERNS:
             normalized = re.sub(pattern, replacement, normalized)
         normalized = re.sub(r"[^a-zA-Z_\s]", " ", normalized)
@@ -160,27 +189,48 @@ class IndonesianTextPreprocessor:
 
     @staticmethod
     def tokenize_text(text: str) -> list[str]:
+        # Normalisasi pengulangan huruf berlebih (misal: baguuuusss -> bagus)
+        text = re.sub(r'(.)\1{2,}', r'\1', text)
+        
+        # Tokenisasi dasar
         return [token for token in text.split() if token]
+
+    def normalize_slang(self, tokens: list[str]) -> list[str]:
+        if not self.slang_dict:
+            return tokens
+        # Split mapped words because some slang maps to multiple words (e.g. "gaada" -> "tidak ada uang")
+        normalized_tokens = []
+        for token in tokens:
+            mapped = self.slang_dict.get(token, token)
+            normalized_tokens.extend(mapped.split())
+        return normalized_tokens
 
     def remove_stopwords(self, tokens: list[str]) -> list[str]:
         return [token for token in tokens if token not in self.stopwords_id and len(token) > 1]
 
     def stem_text(self, tokens: list[str]) -> str:
-        protected_tokens: list[str] = []
-        stem_targets: list[str] = []
-
-        for token in tokens:
+        processed_tokens = []
+        placeholders = {}
+        for idx, token in enumerate(tokens):
             if token in PROTECTED_TOKENS:
-                protected_tokens.append(token)
+                placeholder = f"protectedtoken{idx}"
+                placeholders[placeholder] = token
+                processed_tokens.append(placeholder)
             else:
-                stem_targets.append(token)
+                processed_tokens.append(token)
 
-        stemmed_text = self.stemmer.stem(" ".join(stem_targets)) if stem_targets else ""
-        stemmed_tokens = [token for token in stemmed_text.split() if token]
-        return " ".join(protected_tokens + stemmed_tokens)
+        stemmed_text = self.stemmer.stem(" ".join(processed_tokens)) if processed_tokens else ""
+        
+        final_tokens = []
+        for token in stemmed_text.split():
+            orig_token = placeholders.get(token, token)
+            final_tokens.append(orig_token)
+            
+        return " ".join(final_tokens)
 
     def preprocess_text(self, text: str) -> str:
         normalized = self.normalize_text(text)
         tokens = self.tokenize_text(normalized)
+        tokens = self.normalize_slang(tokens)
         filtered_tokens = self.remove_stopwords(tokens)
         return self.stem_text(filtered_tokens)

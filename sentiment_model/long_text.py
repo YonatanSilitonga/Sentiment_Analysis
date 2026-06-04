@@ -23,7 +23,7 @@ CONTRAST_SPLIT_PATTERN = re.compile(
     r")\b"
 )
 
-CONFLICT_NEUTRAL_THRESHOLD = 0.30
+CONFLICT_NEUTRAL_THRESHOLD = 0.45
 
 
 def split_long_text_segments(text: str) -> list[str]:
@@ -32,9 +32,8 @@ def split_long_text_segments(text: str) -> list[str]:
         return []
 
     chunks: list[str] = []
-    for piece in re.split(r"(?<=[.!?;])\s+", text):
-        piece = piece.strip()
-        if not piece:
+    for piece in re.split(r"(?<=[.!?;])\s*", text):
+        if not piece or not re.search(r"\w", piece):
             continue
 
         # Split further on contrast connectors to isolate mixed sentiment clauses.
@@ -107,8 +106,10 @@ def classify_long_text(
             weight += min(float(row.get("negative_keyword_score", 0.0)) * 0.04, 0.2)
         if "positive_keyword_score" in seg_df.columns:
             weight += min(float(row.get("positive_keyword_score", 0.0)) * 0.03, 0.15)
+        if "neutral_keyword_score" in seg_df.columns:
+            weight += min(float(row.get("neutral_keyword_score", 0.0)) * 0.05, 0.2)
 
-        score_by_label[label] = score_by_label.get(label, 0.0) + weight
+        score_by_label[label] = score_by_label.get(label, 0.0) + 1.5 * weight
         segment_votes[label] = segment_votes.get(label, 0) + 1
 
         for cls in classes:
@@ -116,7 +117,7 @@ def classify_long_text(
             if prob_col in seg_df.columns:
                 score_by_label[cls] = score_by_label.get(cls, 0.0) + float(row[prob_col]) * weight * 0.35
 
-    ranked = sorted(score_by_label.items(), key=lambda kv: kv[1], reverse=True)
+    ranked = sorted(score_by_label.items(), key=lambda x: x[1], reverse=True)
     best_label, best_score = ranked[0]
     second_score = ranked[1][1] if len(ranked) > 1 else 0.0
 
@@ -130,10 +131,12 @@ def classify_long_text(
     if has_mixed_polarity and has_contrast_connector and margin <= CONFLICT_NEUTRAL_THRESHOLD:
         final_label = "netral"
         reason = "mixed_polarity_conflict_to_neutral"
-
-    if "netral" in score_by_label and margin <= uncertainty_margin:
+    elif has_mixed_polarity and margin <= (CONFLICT_NEUTRAL_THRESHOLD * 0.9):
         final_label = "netral"
-        reason = "long_text_close_scores_to_neutral"
+        reason = "mixed_polarity_low_margin_to_neutral"
+    elif "netral" in score_by_label and margin <= (CONFLICT_NEUTRAL_THRESHOLD * 0.6):
+        final_label = "netral"
+        reason = "long_text_netral_present_low_margin"
 
     total_score = sum(score_by_label.values()) or 1.0
     aggregated_probs = {f"prob_{cls}": score_by_label[cls] / total_score for cls in classes}
