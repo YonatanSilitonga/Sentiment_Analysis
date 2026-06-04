@@ -1,0 +1,167 @@
+{
+  "created_at": "2026-04-23T15:49:09",
+  "version": "v10_improved_preprocessing_superlative_keywords",
+  "data_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Sentiment_Analysis\\Merged_Excel\\dataset_labeled_combined_v3.xlsx",
+  "model_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Sentiment_Analysis\\sentiment_model\\model_artifacts_v10\\sentiment_model_v10.joblib",
+  "vectorizer_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Sentiment_Analysis\\sentiment_model\\model_artifacts_v10\\tfidf_vectorizer_v10.joblib",
+  "hybrid_rules_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Sentiment_Analysis\\sentiment_model\\model_artifacts_v10\\hybrid_rules_v10.json",
+  "best_model": "logistic_regression_hybrid_v10",
+  "selection_metric": "macro_f1_then_negative_recall_then_neutral_recall_then_positive_recall_then_accuracy",
+  "refit_on_full_data": true,
+  "label_order": [
+    "negatif",
+    "netral",
+    "positif"
+  ],
+  "rows_after_preprocessing": 1227,
+  "train_rows_before_rebalance": 981,
+  "train_rows_after_rebalance": 981,
+  "test_rows": 246,
+  "full_rows_after_rebalance": 1227,
+  "data_source": "combined_v3_with_phrase_preservation_and_soundproof",
+  "train_distribution_before": {
+    "netral": 355,
+    "positif": 350,
+    "negatif": 276
+  },
+  "train_distribution_after": {
+    "negatif": 335,
+    "positif": 323,
+    "netral": 323
+  },
+  "selected_class_weight": "balanced",
+  "base_metrics": {
+    "accuracy": 0.7926829268292683,
+    "macro_f1": 0.7903042196728977,
+    "negative_recall": 0.6811594202898551,
+    "positive_recall": 0.8409090909090909,
+    "neutral_recall": 0.8314606741573034,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.8867924528301887,
+        "recall": 0.6811594202898551,
+        "f1-score": 0.7704918032786885,
+        "support": 69.0
+      },
+      "netral": {
+        "precision": 0.7956989247311828,
+        "recall": 0.8314606741573034,
+        "f1-score": 0.8131868131868132,
+        "support": 89.0
+      },
+      "positif": {
+        "precision": 0.74,
+        "recall": 0.8409090909090909,
+        "f1-score": 0.7872340425531915,
+        "support": 88.0
+      },
+      "accuracy": 0.7926829268292683,
+      "macro avg": {
+        "precision": 0.8074971258537905,
+        "recall": 0.7845097284520831,
+        "f1-score": 0.7903042196728977,
+        "support": 246.0
+      },
+      "weighted avg": {
+        "precision": 0.8013247298632451,
+        "recall": 0.7926829268292683,
+        "f1-score": 0.791927465628198,
+        "support": 246.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        47,
+        9,
+        13
+      ],
+      [
+        2,
+        74,
+        13
+      ],
+      [
+        4,
+        10,
+        74
+      ]
+    ],
+    "selected_class_weight_name": "balanced"
+  },
+  "hybrid_metrics": {
+    "accuracy": 0.8170731707317073,
+    "macro_f1": 0.8170180610858577,
+    "negative_recall": 0.7681159420289855,
+    "positive_recall": 0.8522727272727273,
+    "neutral_recall": 0.8202247191011236,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.8688524590163934,
+        "recall": 0.7681159420289855,
+        "f1-score": 0.8153846153846154,
+        "support": 69.0
+      },
+      "netral": {
+        "precision": 0.8295454545454546,
+        "recall": 0.8202247191011236,
+        "f1-score": 0.8248587570621468,
+        "support": 89.0
+      },
+      "positif": {
+        "precision": 0.7731958762886598,
+        "recall": 0.8522727272727273,
+        "f1-score": 0.8108108108108109,
+        "support": 88.0
+      },
+      "accuracy": 0.8170731707317073,
+      "macro avg": {
+        "precision": 0.8238645966168359,
+        "recall": 0.8135377961342787,
+        "f1-score": 0.8170180610858577,
+        "support": 246.0
+      },
+      "weighted avg": {
+        "precision": 0.8204130172360922,
+        "recall": 0.8170731707317073,
+        "f1-score": 0.8171760942740687,
+        "support": 246.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        53,
+        7,
+        9
+      ],
+      [
+        3,
+        73,
+        13
+      ],
+      [
+        5,
+        8,
+        75
+      ]
+    ]
+  },
+  "hybrid_config": {
+    "enabled": true,
+    "negative_label": "negatif",
+    "high_confidence_threshold": 0.55,
+    "mid_confidence_threshold": 0.35,
+    "mid_keyword_score_threshold": 2,
+    "strong_signal_score_threshold": 3,
+    "strong_signal_min_prob": 0.1,
+    "positive_override_enabled": true,
+    "positive_label": "positif",
+    "positive_keyword_score_threshold": 3,
+    "positive_mid_confidence_threshold": 0.22,
+    "positive_block_negative_prob": 0.62,
+    "neutral_override_enabled": true,
+    "neutral_label": "netral",
+    "neutral_min_positive_score": 2,
+    "neutral_max_negative_score": 1,
+    "neutral_max_negative_prob": 0.3
+  }
+}
