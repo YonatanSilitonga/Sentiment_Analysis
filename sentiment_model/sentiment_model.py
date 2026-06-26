@@ -103,7 +103,6 @@ def _first_non_empty_text(*values: Any) -> str:
             return text
     return "model_only"
 
-
 @dataclass
 class SentimentPrediction:
     label: str
@@ -117,6 +116,8 @@ class SentimentPrediction:
     long_text_reason: str | None = None
     uncertainty_margin: float | None = None
     model_version: str | None = None
+    sentiment_is_uncertain: bool = False
+    sentiment_uncertainty_reasons: list[str] = None
 
     def to_dict(self) -> dict[str, Any]:
         analyzed_at = datetime.now(timezone.utc).isoformat()
@@ -144,6 +145,8 @@ class SentimentPrediction:
             "long_text_used": self.long_text_used,
             "long_text_reason": self.long_text_reason,
             "uncertainty_margin": self.uncertainty_margin,
+            "sentiment_is_uncertain": self.sentiment_is_uncertain,
+            "sentiment_uncertainty_reasons": self.sentiment_uncertainty_reasons or [],
             "integrity": {
                 "label_in_scores": label_in_scores,
                 "confidence_matches_label_score": confidence_matches,
@@ -158,7 +161,6 @@ class SentimentPrediction:
         if self.sentence_predictions is not None:
             payload["sentence_predictions"] = self.sentence_predictions
         return {key: _clean_value(value) for key, value in payload.items()}
-
 
 class SentimentAnalysisService:
     def __init__(
@@ -309,9 +311,12 @@ class SentimentAnalysisService:
         scores = _scores_from_row(pd.Series(row), self.label_order_internal)
         label_external, confidence = _align_label_and_confidence(label_external, scores)
         reason = _first_non_empty_text(row.get("hybrid_reason"), row.get("long_text_reason"), row.get("reason"))
+
         long_text_used = bool(row.get("long_text_used", False))
         long_text_reason = row.get("long_text_reason")
         uncertainty_margin = row.get("uncertainty_margin")
+        sentiment_is_uncertain = bool(row.get("sentiment_is_uncertain", False))
+        sentiment_uncertainty_reasons = row.get("sentiment_uncertainty_reasons", [])
 
         sentence_predictions: list[dict[str, Any]] | None = None
         if long_text_used and include_sentence_predictions:
@@ -329,6 +334,8 @@ class SentimentAnalysisService:
             long_text_reason=str(long_text_reason) if long_text_reason is not None else None,
             uncertainty_margin=float(uncertainty_margin) if uncertainty_margin is not None and not pd.isna(uncertainty_margin) else None,
             model_version=self.model_version,
+            sentiment_is_uncertain=sentiment_is_uncertain,
+            sentiment_uncertainty_reasons=sentiment_uncertainty_reasons,
         )
 
     def _build_sentence_predictions(self, text: str) -> list[dict[str, Any]]:

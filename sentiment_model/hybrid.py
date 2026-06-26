@@ -126,6 +126,17 @@ def default_hybrid_config() -> dict[str, Any]:
 def is_negated(text: str, start_pos: int, window: int = 15) -> bool:
     """Mengecek apakah ada kata negasi dalam jendela karakter sebelum posisi tertentu."""
     prefix = text[max(0, start_pos - window) : start_pos].lower()
+    
+    # Hentikan pencarian jika melintasi tanda baca pemisah kalimat/klausa
+    for separator in {".", ",", "!", "?", ";"}:
+        if separator in prefix:
+            prefix = prefix.split(separator)[-1]
+            
+    # Hentikan jika melintasi kata hubung kontras
+    for contrast in {"tapi", "tetapi", "namun", "sedangkan"}:
+        if re.search(rf"\b{contrast}\b", prefix):
+            prefix = re.split(rf"\b{contrast}\b", prefix)[-1]
+            
     return any(re.search(rf"\b{neg}\b", prefix) for neg in NEGATION_WORDS)
 
 

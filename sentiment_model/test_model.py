@@ -86,10 +86,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_artifacts(model_dir: Path):
-    model_candidates = ["sentiment_model_v11.joblib", "sentiment_model_v10.joblib", "sentiment_model_v9.joblib", "sentiment_model.joblib", "sentiment_model_v2.joblib", "sentiment_model_v3.joblib", "sentiment_model_v4.joblib", "sentiment_model_v5.joblib", "sentiment_model_v7.joblib", "sentiment_model_v8.joblib"]
-    vectorizer_candidates = ["tfidf_vectorizer_v11.joblib", "tfidf_vectorizer_v10.joblib", "tfidf_vectorizer_v9.joblib", "tfidf_vectorizer.joblib", "tfidf_vectorizer_v2.joblib", "tfidf_vectorizer_v3.joblib", "tfidf_vectorizer_v4.joblib", "tfidf_vectorizer_v5.joblib", "tfidf_vectorizer_v7.joblib", "tfidf_vectorizer_v8.joblib"]
-    metadata_candidates = ["metadata_v11.json", "metadata_v10.json", "metadata_v9.json", "metadata.json", "metadata_v2.json", "metadata_v3.json", "metadata_v4.json", "metadata_v5.json", "metadata_v7.json", "metadata_v8.json"]
-    hybrid_candidates = ["hybrid_rules_v11.json", "hybrid_rules_v10.json", "hybrid_rules_v9.json", "hybrid_rules.json", "hybrid_rules_v2.json", "hybrid_rules_v3.json", "hybrid_rules_v4.json", "hybrid_rules_v5.json", "hybrid_rules_v7.json", "hybrid_rules_v8.json"]
+    model_candidates = ["sentiment_model_v12.joblib", "sentiment_model_v11.joblib", "sentiment_model_v10.joblib", "sentiment_model_v9.joblib", "sentiment_model.joblib", "sentiment_model_v2.joblib", "sentiment_model_v3.joblib", "sentiment_model_v4.joblib", "sentiment_model_v5.joblib", "sentiment_model_v7.joblib", "sentiment_model_v8.joblib"]
+    vectorizer_candidates = ["tfidf_vectorizer_v12.joblib", "tfidf_vectorizer_v11.joblib", "tfidf_vectorizer_v10.joblib", "tfidf_vectorizer_v9.joblib", "tfidf_vectorizer.joblib", "tfidf_vectorizer_v2.joblib", "tfidf_vectorizer_v3.joblib", "tfidf_vectorizer_v4.joblib", "tfidf_vectorizer_v5.joblib", "tfidf_vectorizer_v7.joblib", "tfidf_vectorizer_v8.joblib"]
+    metadata_candidates = ["metadata_v12.json", "metadata_v11.json", "metadata_v10.json", "metadata_v9.json", "metadata.json", "metadata_v2.json", "metadata_v3.json", "metadata_v4.json", "metadata_v5.json", "metadata_v7.json", "metadata_v8.json"]
+    hybrid_candidates = ["hybrid_rules_v12.json", "hybrid_rules_v11.json", "hybrid_rules_v10.json", "hybrid_rules_v9.json", "hybrid_rules.json", "hybrid_rules_v2.json", "hybrid_rules_v3.json", "hybrid_rules_v4.json", "hybrid_rules_v5.json", "hybrid_rules_v7.json", "hybrid_rules_v8.json"]
 
     metadata_path = next((model_dir / name for name in metadata_candidates if (model_dir / name).exists()), model_dir / metadata_candidates[0])
     hybrid_path = next((model_dir / name for name in hybrid_candidates if (model_dir / name).exists()), None)
@@ -225,57 +225,109 @@ def predict_texts(
                 "uncertainty_policy": "long_text_aggregate",
             }
             row.update(long_out["aggregated_probs"])
-            rows.append(row)
-            continue
+        else:
+            vectors = vectorizer.transform([processed_text])
+            prediction = str(model.predict(vectors)[0])
 
-        vectors = vectorizer.transform([processed_text])
-        prediction = str(model.predict(vectors)[0])
+            single_df = pd.DataFrame(
+                {
+                    "ulasan_asli": [raw_text],
+                    "ulasan_preprocessed": [processed_text],
+                    "prediksi_sentimen": [prediction],
+                }
+            )
+            if hasattr(model, "predict_proba"):
+                proba = model.predict_proba(vectors)[0]
+                for idx, label in enumerate(model.classes_):
+                    single_df[f"prob_{label}"] = [proba[idx]]
 
-        single_df = pd.DataFrame(
-            {
-                "ulasan_asli": [raw_text],
-                "ulasan_preprocessed": [processed_text],
-                "prediksi_sentimen": [prediction],
-            }
-        )
-        if hasattr(model, "predict_proba"):
-            proba = model.predict_proba(vectors)[0]
-            for idx, label in enumerate(model.classes_):
-                single_df[f"prob_{label}"] = [proba[idx]]
+            if hybrid_config:
+                single_df = apply_hybrid_rules(single_df, [raw_text], hybrid_config)
 
-        if hybrid_config:
-            single_df = apply_hybrid_rules(single_df, [raw_text], hybrid_config)
+            # Conservative policy: when top probabilities are very close,
+            # avoid hard positive/negative label and map to neutral.
+            if close_margin_neutral > 0:
+                prob_cols = [col for col in single_df.columns if col.startswith("prob_")]
+                if len(prob_cols) >= 2:
+                    scored = sorted(
+                        [(col.replace("prob_", ""), float(single_df.at[0, col])) for col in prob_cols],
+                        key=lambda x: x[1],
+                        reverse=True,
+                    )
+                    top_label, top_prob = scored[0]
+                    second_prob = scored[1][1]
+                    margin = top_prob - second_prob
 
-        # Conservative policy: when top probabilities are very close,
-        # avoid hard positive/negative label and map to neutral.
-        if close_margin_neutral > 0:
-            prob_cols = [col for col in single_df.columns if col.startswith("prob_")]
-            if len(prob_cols) >= 2:
-                scored = sorted(
-                    [(col.replace("prob_", ""), float(single_df.at[0, col])) for col in prob_cols],
-                    key=lambda x: x[1],
-                    reverse=True,
-                )
-                top_label, top_prob = scored[0]
-                second_prob = scored[1][1]
-                margin = top_prob - second_prob
+                    current_reason = str(single_df.at[0, "hybrid_reason"]) if "hybrid_reason" in single_df.columns else "model_only"
+                    if margin <= close_margin_neutral and current_reason == "model_only":
+                        single_df.at[0, "prediksi_sentimen"] = "netral"
+                        single_df.at[0, "hybrid_reason"] = "close_probability_to_neutral"
+                    single_df["uncertainty_margin"] = [margin]
+                    single_df["uncertainty_policy"] = [f"close_margin<={close_margin_neutral}"]
 
-                current_reason = str(single_df.at[0, "hybrid_reason"]) if "hybrid_reason" in single_df.columns else "model_only"
-                if margin <= close_margin_neutral and current_reason == "model_only":
-                    single_df.at[0, "prediksi_sentimen"] = "netral"
-                    single_df.at[0, "hybrid_reason"] = "close_probability_to_neutral"
-                single_df["uncertainty_margin"] = [margin]
-                single_df["uncertainty_policy"] = [f"close_margin<={close_margin_neutral}"]
+            row = single_df.iloc[0].to_dict()
+            row["long_text_used"] = False
+            row["long_text_segments"] = len(segs)
+            row["long_text_margin"] = None
+            row["long_text_reason"] = "short_text_default"
+            if "uncertainty_margin" not in row:
+                row["uncertainty_margin"] = None
+            if "uncertainty_policy" not in row:
+                row["uncertainty_policy"] = "disabled"
 
-        row = single_df.iloc[0].to_dict()
-        row["long_text_used"] = False
-        row["long_text_segments"] = len(segs)
-        row["long_text_margin"] = None
-        row["long_text_reason"] = "short_text_default"
-        if "uncertainty_margin" not in row:
-            row["uncertainty_margin"] = None
-        if "uncertainty_policy" not in row:
-            row["uncertainty_policy"] = "disabled"
+        # --- DETEKSI KETIDAKPASTIAN (UNCERTAINTY DETECTOR) ---
+        label = row["prediksi_sentimen"]
+        scores = {
+            "positif": float(row.get("prob_positif", 0.0)),
+            "negatif": float(row.get("prob_negatif", 0.0)),
+            "netral": float(row.get("prob_netral", 0.0)),
+        }
+        margin = row.get("uncertainty_margin")
+        long_text_used = row.get("long_text_used", False)
+        long_text_reason = row.get("long_text_reason")
+
+        uncertainty_reasons = []
+
+        # 1. Low Margin Check
+        if not long_text_used:
+            if margin is not None and margin <= 0.18:
+                hybrid_reason = row.get("hybrid_reason", "model_only")
+                if hybrid_reason in ("model_only", "close_probability_to_neutral"):
+                    uncertainty_reasons.append("Margin probabilitas model tipis")
+        else:
+            if long_text_reason in ("mixed_polarity_conflict_to_neutral", "mixed_polarity_low_margin_to_neutral"):
+                uncertainty_reasons.append("Terdapat konflik sentimen (mixed polarity) dalam ulasan panjang")
+
+        # 2. Short text polarity conflict
+        if not long_text_used:
+            if scores.get("positif", 0.0) > 0.30 and scores.get("negatif", 0.0) > 0.30:
+                uncertainty_reasons.append("Probabilitas positif dan negatif bersaing ketat")
+
+        # 3. Sarcasm / Contrast Clues
+        positive_clues = {"bersih", "bagus", "cepat", "ramah", "mantap", "indah", "puas", "nyaman", "asri", "keren", "hebat"}
+        negative_clues = {"kotor", "kecewa", "nunggu", "lama", "rusak", "pungli", "mahal", "sampah", "parah", "bau", "jelek", "buruk", "maling"}
+
+        words = set(re.findall(r"\b\w+\b", raw_text.lower()))
+        has_pos = bool(words & positive_clues)
+        has_neg = bool(words & negative_clues)
+        has_contrast = bool(re.search(r"\b(?:tapi|tetapi|namun|cuma|padahal|sedangkan|hanya saja)\b", raw_text.lower()))
+
+        if label == "positif" and has_neg:
+            uncertainty_reasons.append("Terindikasi sarkasme (sentimen positif dengan kata-kata negatif)")
+        elif label == "negatif" and has_pos:
+            uncertainty_reasons.append("Terindikasi kontradiksi (sentimen negatif dengan kata-kata positif)")
+        elif has_contrast and has_pos and has_neg:
+            uncertainty_reasons.append("Ulasan mengandung kata kontras dengan indikasi positif & negatif")
+
+        # 4. Out of Vocabulary / Typo detection (Low TF-IDF signal on non-empty word count)
+        if word_count >= 4:
+            tfidf_sum = float(vectorizer.transform([processed_text]).sum())
+            if tfidf_sum <= 0.08:
+                uncertainty_reasons.append("Banyak kata tidak dikenali / kemungkinan typo ekstrem")
+
+        row["sentiment_is_uncertain"] = False
+        row["sentiment_uncertainty_reasons"] = []
+
         rows.append(row)
 
     return pd.DataFrame(rows)
@@ -348,6 +400,8 @@ def run_single_or_interactive(
         print(f"Long-text reason    : {row.get('long_text_reason', '-')}")
         if row.get("uncertainty_margin") is not None:
             print(f"Uncertainty margin  : {float(row.get('uncertainty_margin')):.4f}")
+        print(f"Is uncertain        : {bool(row.get('sentiment_is_uncertain', False))}")
+        print(f"Uncertainty reasons : {row.get('sentiment_uncertainty_reasons', [])}")
         print("=" * 70)
         return
 
@@ -388,7 +442,8 @@ def run_single_or_interactive(
         print(f"Long-text mode      : {bool(row.get('long_text_used', False))} ({row.get('long_text_reason', '-')})")
         if row.get("uncertainty_margin") is not None:
             print(f"Uncertainty margin  : {float(row.get('uncertainty_margin')):.4f}")
-
+        print(f"Is uncertain        : {bool(row.get('sentiment_is_uncertain', False))}")
+        print(f"Uncertainty reasons : {row.get('sentiment_uncertainty_reasons', [])}")
 
 def run_batch(
     model,

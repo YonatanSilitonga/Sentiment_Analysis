@@ -1,0 +1,171 @@
+{
+  "created_at": "2026-06-18T15:10:58",
+  "version": "v12_optimized_hybrid_negation_rules",
+  "data_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Sentiment_Analysis\\Merged_Excel\\dataset_v11_master.xlsx",
+  "model_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Sentiment_Analysis\\sentiment_model\\model_artifacts_v12\\sentiment_model_v12.joblib",
+  "vectorizer_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Sentiment_Analysis\\sentiment_model\\model_artifacts_v12\\tfidf_vectorizer_v12.joblib",
+  "hybrid_rules_path": "D:\\semester-4-IT Del\\Semester VI\\UI-UX DESIGN\\Sentiment_Analysis\\sentiment_model\\model_artifacts_v12\\hybrid_rules_v12.json",
+  "best_model": "logistic_regression_hybrid_v12",
+  "selection_metric": "macro_f1_then_negative_recall_then_neutral_recall_then_positive_recall_then_accuracy",
+  "refit_on_full_data": true,
+  "label_order": [
+    "negatif",
+    "netral",
+    "positif"
+  ],
+  "rows_after_preprocessing": 13027,
+  "train_rows_before_rebalance": 10421,
+  "train_rows_after_rebalance": 10421,
+  "test_rows": 2606,
+  "full_rows_after_rebalance": 13027,
+  "data_source": "dataset_v11_master_13k_rows",
+  "train_distribution_before": {
+    "positif": 6053,
+    "negatif": 3049,
+    "netral": 1319
+  },
+  "train_distribution_after": {
+    "negatif": 3545,
+    "positif": 3438,
+    "netral": 3438
+  },
+  "selected_class_weight": {
+    "negatif": 1.05,
+    "netral": 1.0,
+    "positif": 0.95
+  },
+  "base_metrics": {
+    "accuracy": 0.8422870299309286,
+    "macro_f1": 0.8046702139122278,
+    "negative_recall": 0.8162729658792651,
+    "positive_recall": 0.8652575957727873,
+    "neutral_recall": 0.796969696969697,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.7893401015228426,
+        "recall": 0.8162729658792651,
+        "f1-score": 0.8025806451612904,
+        "support": 762.0
+      },
+      "netral": {
+        "precision": 0.650990099009901,
+        "recall": 0.796969696969697,
+        "f1-score": 0.7166212534059946,
+        "support": 330.0
+      },
+      "positif": {
+        "precision": 0.9264497878359265,
+        "recall": 0.8652575957727873,
+        "f1-score": 0.894808743169399,
+        "support": 1514.0
+      },
+      "accuracy": 0.8422870299309286,
+      "macro avg": {
+        "precision": 0.7889266627895567,
+        "recall": 0.8261667528739164,
+        "f1-score": 0.8046702139122278,
+        "support": 2606.0
+      },
+      "weighted avg": {
+        "precision": 0.8514769258700177,
+        "recall": 0.8422870299309286,
+        "f1-score": 0.8452770155009025,
+        "support": 2606.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        622,
+        65,
+        75
+      ],
+      [
+        38,
+        263,
+        29
+      ],
+      [
+        128,
+        76,
+        1310
+      ]
+    ],
+    "selected_class_weight_name": "custom_v1"
+  },
+  "hybrid_metrics": {
+    "accuracy": 0.8303914044512664,
+    "macro_f1": 0.7893601253493134,
+    "negative_recall": 0.8385826771653543,
+    "positive_recall": 0.8487450462351387,
+    "neutral_recall": 0.7272727272727273,
+    "classification_report": {
+      "negatif": {
+        "precision": 0.7482435597189696,
+        "recall": 0.8385826771653543,
+        "f1-score": 0.7908415841584159,
+        "support": 762.0
+      },
+      "netral": {
+        "precision": 0.6593406593406593,
+        "recall": 0.7272727272727273,
+        "f1-score": 0.69164265129683,
+        "support": 330.0
+      },
+      "positif": {
+        "precision": 0.9257925072046109,
+        "recall": 0.8487450462351387,
+        "f1-score": 0.8855961405926946,
+        "support": 1514.0
+      },
+      "accuracy": 0.8303914044512664,
+      "macro avg": {
+        "precision": 0.7777922420880801,
+        "recall": 0.8048668168910735,
+        "f1-score": 0.7893601253493134,
+        "support": 2606.0
+      },
+      "weighted avg": {
+        "precision": 0.8401357889470656,
+        "recall": 0.8303914044512664,
+        "f1-score": 0.8333292090997722,
+        "support": 2606.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        639,
+        69,
+        54
+      ],
+      [
+        41,
+        240,
+        49
+      ],
+      [
+        174,
+        55,
+        1285
+      ]
+    ]
+  },
+  "hybrid_config": {
+    "enabled": true,
+    "negative_label": "negatif",
+    "high_confidence_threshold": 0.55,
+    "mid_confidence_threshold": 0.25,
+    "mid_keyword_score_threshold": 3,
+    "strong_signal_score_threshold": 3,
+    "strong_signal_min_prob": 0.2,
+    "positive_override_enabled": true,
+    "positive_label": "positif",
+    "positive_keyword_score_threshold": 3,
+    "positive_mid_confidence_threshold": 0.22,
+    "positive_block_negative_prob": 0.62,
+    "neutral_override_enabled": false,
+    "neutral_label": "netral",
+    "neutral_min_positive_score": 2,
+    "neutral_max_negative_score": 1,
+    "neutral_max_negative_prob": 0.3
+  }
+}
